@@ -26,11 +26,11 @@
 
     public static void Main(string[] args)
     {
-        //List<string> allPlayers = ReadPlayersFromFile(PLAYERS_FILE);
-        //List<Clan> allClans = ReadClansFromFile(CLANS_FILE);
+        List<string> allPlayers = ReadPlayersFromFile(PLAYERS_FILE);
+        List<Clan> allClans = ReadClansFromFile(CLANS_FILE);
 
-        //WriteClansToFile(CLANS_FILE, allClans);
-        //WriteFile(PLAYERS_FILE, allPlayers.ToArray());
+        WriteClansToFile(CLANS_FILE, allClans);
+        WriteFile(PLAYERS_FILE, allPlayers.ToArray());
         int userChoiceInMenu = -1;
         Clan clanCurrent = new Clan();
         InitClan(clanCurrent);
@@ -80,6 +80,7 @@
         InitClan(clan);
         Console.Write("Entez le nom de votre clan : ");
         clan.ClanName = Console.ReadLine() ?? "Sans Nom";
+        // todo: pas finit
         return clan;
         
     }
@@ -106,7 +107,7 @@
 
     #region FILE ACCESS
 
-    /*
+ 
     // PROF : vous aurez peut-être à modifier les noms des propriétés suivantes.
     private static void WriteClansToFile(string fileName, List<Clan> allClans)
     {
