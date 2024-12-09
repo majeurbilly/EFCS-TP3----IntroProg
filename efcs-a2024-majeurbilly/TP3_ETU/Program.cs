@@ -81,6 +81,7 @@
         Console.Write("Entez le nom de votre clan : ");
         clan.ClanName = Console.ReadLine() ?? "Sans Nom";
         return clan;
+        
     }
 
     private static List<string> ReadPlayersFromFile(string filesPlayersCsv)
