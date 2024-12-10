@@ -26,83 +26,204 @@
 
     public static void Main(string[] args)
     {
-        List<string> allPlayers = ReadPlayersFromFile(PLAYERS_FILE);
-        List<Clan> allClans = ReadClansFromFile(CLANS_FILE);
+            // Initialisation
+            List<Clan> allClans = new List<Clan>();
+            bool exit = false;
 
-        WriteClansToFile(CLANS_FILE, allClans);
-        WriteFile(PLAYERS_FILE, allPlayers.ToArray());
-        int userChoiceInMenu = -1;
-        Clan clanCurrent = new Clan();
-        InitClan(clanCurrent);
-        while (userChoiceInMenu != QUIT)
-        {
-            do
+            while (!exit)
             {
-                Console.Clear();
+                // Affiche le menu
                 DisplayMenu();
-                Console.Write("Your choice : ");
-                userChoiceInMenu = int.Parse(Console.ReadLine() ?? string.Empty);
-            } while (!CHOICING.Contains(userChoiceInMenu));
+                Console.Write("Votre choix : ");
+                string? input = Console.ReadLine();
+                int choice;
 
-            if (userChoiceInMenu == QUIT)
-            {
-                Console.Clear();
-                Console.WriteLine("Au revoir !");
-            }
-            else if (userChoiceInMenu == ADD_CLAN)
-            {
-                
+                if (int.TryParse(input, out choice))
+                {
+                    if (choice == QUIT)
+                    {
+                        Console.WriteLine("Au revoir !");
+                        exit = true;
+                    }
+                    else if (choice == ADD_CLAN)
+                    {
+                        Clan newClan = CreateClan();
+                        Library.InsertClan(allClans, newClan);
+                        Console.WriteLine("Clan ajouté avec succès !");
+                    }
+                    else if (choice == UPDATE_CLAN)
+                    {
+                        Console.Write("Entrez l'index du clan à modifier : ");
+                        int index = int.Parse(Console.ReadLine() ?? "0");
+                        Clan updatedClan = CreateClan();
+                        Library.UpdateClan(allClans, index, updatedClan);
+                        Console.WriteLine("Clan mis à jour !");
+                    }
+                    else if (choice == REMOVE_CLAN)
+                    {
+                        Console.Write("Entrez l'index du clan à supprimer : ");
+                        int index = int.Parse(Console.ReadLine() ?? "0");
+                        Library.RemoveClan(allClans, index);
+                        Console.WriteLine("Clan supprimé !");
+                    }
+                    else if (choice == LIST_ALL_CLAN)
+                    {
+                        ListAllClans(allClans);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Choix invalide.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Veuillez entrer un numéro valide.");
+                }
+
+                Console.WriteLine("\nAppuyez sur une touche pour continuer...");
+                Console.ReadKey();
             }
         }
-    }
 
-    public static void DisplayMenu()
-    {
-        Console.WriteLine("0) Quit\n" +
-                          "1) Add a clan\n" +
-                          "2) Update a clan\n" +
-                          "3) Remove a clan\n" +
-                          "4) List all clans\n" +
-                          "5) Add a player");
-    }
+        public static void DisplayMenu()
+        {
+            Console.Clear();
+            Console.WriteLine("Menu principal");
+            Console.WriteLine("0) Quitter");
+            Console.WriteLine("1) Ajouter un clan");
+            Console.WriteLine("2) Modifier un clan");
+            Console.WriteLine("3) Supprimer un clan");
+            Console.WriteLine("4) Lister tous les clans");
+        }
 
-    public static void InitClan(Clan clan)
-    {
-        clan.ClanName = "";
-        clan.ClanYear = 0;
-        clan.ClanCategory = 0;
-        clan.ClanScore = 0;
-    }
+        public static Clan CreateClan()
+        {
+            Clan clan = new Clan();
+            Console.Write("Nom du clan : ");
+            clan.ClanName = Console.ReadLine() ?? "Sans Nom";
 
-    public static Clan CreateClan()
-    {
-        Clan clan = new Clan();
-        InitClan(clan);
-        Console.Write("Entez le nom de votre clan : ");
-        clan.ClanName = Console.ReadLine() ?? "Sans Nom";
-        // todo: pas finit
-        return clan;
-        
-    }
+            Console.Write("Année de création : ");
+            clan.ClanYear = int.Parse(Console.ReadLine() ?? "0");
+
+            Console.Write("Type de clan (0: Exploration, 1: Combat, 2: Commerce, 3: Politique) : ");
+            clan.ClanCategory = int.Parse(Console.ReadLine() ?? "0");
+
+            Console.Write("Score du clan : ");
+            clan.ClanScore = int.Parse(Console.ReadLine() ?? "0");
+
+            clan.ClanPlayers = new List<int>();
+            Console.WriteLine("Entrez les IDs des joueurs (séparés par des espaces) : ");
+            string? playersInput = Console.ReadLine();
+            if (!string.IsNullOrEmpty(playersInput))
+            {
+                string[] playerIds = playersInput.Split(' ');
+                foreach (string id in playerIds)
+                {
+                    if (int.TryParse(id, out int playerId))
+                    {
+                        clan.ClanPlayers.Add(playerId);
+                    }
+                }
+            }
+
+            return clan;
+        }
+
+        public static void ListAllClans(List<Clan> clans)
+        {
+            Console.Clear();
+            Console.WriteLine("Liste des clans :");
+            for (int i = 0; i < clans.Count; i++)
+            {
+                Clan clan = clans[i];
+                Console.WriteLine($"{i}) {clan.ClanName} - Année : {clan.ClanYear}, Type : {clan.ClanCategory}, Score : {clan.ClanScore}, Joueurs : {string.Join(", ", clan.ClanPlayers)}");
+            }
+        }
 
     private static List<string> ReadPlayersFromFile(string filesPlayersCsv)
     {
-        throw new NotImplementedException();
+        try
+        {
+            List<string> players = new List<string>();
+            using (StreamReader reader = new StreamReader(filesPlayersCsv))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    players.Add(line.Trim()); // Suppression des espaces en trop
+                }
+            }
+            return players;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erreur lors de la lecture du fichier des joueurs : {ex.Message}");
+            return new List<string>(); // Retourne une liste vide en cas d'erreur
+        }
     }
 
     private static List<Clan> ReadClansFromFile(string filesClansCsv)
     {
-        throw new NotImplementedException();
+        try
+        {
+            List<Clan> clans = new List<Clan>();
+            using (StreamReader reader = new StreamReader(filesClansCsv))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    string[] parts = line.Split(','); // Séparer les parties du clan
+                    if (parts.Length >= 5)
+                    {
+                        Clan clan = new Clan
+                        {
+                            ClanName = parts[0],
+                            ClanYear = int.Parse(parts[1]),
+                            ClanCategory = int.Parse(parts[2]),
+                            ClanScore = int.Parse(parts[3]),
+                            ClanPlayers = parts[4].Split(';').Select(p => int.Parse(p)).ToList()
+                        };
+                        clans.Add(clan);
+                    }
+                }
+            }
+            return clans;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erreur lors de la lecture du fichier des clans : {ex.Message}");
+            return new List<Clan>(); // Retourne une liste vide en cas d'erreur
+        }
     }
 
     private static void WriteClansToFile(string filesClansCsv, List<Clan> allClans)
     {
-        throw new NotImplementedException();
+        string[] allLines = new string[allClans.Count];
+        for (int i = 0; i < allClans.Count; i++)
+        {
+            Clan clan = allClans[i];
+            allLines[i] = $"{clan.ClanName},{clan.ClanYear},{clan.ClanCategory},{clan.ClanScore}," +
+                          $"{string.Join(";", clan.ClanPlayers)}";
+        }
+        WriteFile(filesClansCsv, allLines);
     }
 
     private static void WriteFile(string filesPlayersCsv, string[] toArray)
     {
-        throw new NotImplementedException();
+        try
+        {
+            using (StreamWriter writer = new StreamWriter(filesPlayersCsv, false, System.Text.Encoding.UTF8))
+            {
+                foreach (string line in toArray)
+                {
+                    writer.WriteLine(line);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erreur lors de l'écriture dans le fichier : {ex.Message}");
+        }
     }
 
     #region FILE ACCESS
