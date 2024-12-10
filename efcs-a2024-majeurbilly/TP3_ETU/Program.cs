@@ -1,4 +1,6 @@
-﻿namespace TP3_ETU
+﻿using System.Diagnostics;
+
+namespace TP3_ETU
 {
     public class Program
     {
@@ -22,11 +24,14 @@
         public const int LIST_ALL_CLAN = 4;
         public const int ADD_PLAYER = 5;
 
+        public const int YEAR_MINIMUM = 2012;
+        public readonly List<char> VALIDATION_YES_NO_TOASTER = new List<char> {'y', 'Y', 'n', 'N' };
+
 
 public static void Main(string[] args)
 {
-    List<Clan> allClans = new List<Clan>();
-    List<string> allPlayers = ReadPlayersFromFile(PLAYERS_FILE); // Lecture des joueurs existants
+    List<string> allPlayers = ReadPlayersFromFile(PLAYERS_FILE);
+    List<Clan> allClans = ReadClansFromFile(CLANS_FILE);
     bool exit = false;
 
     while (!exit)
@@ -47,6 +52,7 @@ public static void Main(string[] args)
             {
                 Clan newClan = CreateClan();
                 Library.InsertClan(allClans, newClan);
+                // todo: rajouter newClan dans .csv
                 Console.WriteLine("Clan ajouté avec succès !");
             }
             else if (choice == UPDATE_CLAN)
@@ -68,7 +74,7 @@ public static void Main(string[] args)
             {
                 ListAllClans(allClans);
             }
-            else if (choice == ADD_PLAYER) // Nouvelle option pour ajouter un joueur
+            else if (choice == ADD_PLAYER)
             {
                 string newPlayer = CreatePlayer();
                 allPlayers.Add(newPlayer);
@@ -87,6 +93,9 @@ public static void Main(string[] args)
 
         Console.WriteLine("\nAppuyez sur une touche pour continuer...");
         Console.ReadKey();
+        
+        WriteClansToFile(CLANS_FILE, allClans);
+        WriteFile(PLAYERS_FILE, allPlayers.ToArray());
     }
 }
 
@@ -108,31 +117,84 @@ public static void Main(string[] args)
             Console.Write("Enter clan name:");
             clan.Name = Console.ReadLine() ?? "Sans Nom";
 
-            Console.Write("Enter year:");
-            clan.CreationYear = int.Parse(Console.ReadLine() ?? "0");
-
-            Console.Write("Available category: 0: Exploration, 1: Combat, 2: Trading, 3: Politics, 4: All\nEnter category:");
-            clan.Type = int.Parse(Console.ReadLine() ?? "0");
-
-            Console.Write("Score du clan : ");
-            clan.Score = int.Parse(Console.ReadLine() ?? "0");
-            
-            Console.WriteLine("Do you want to add player(s)? (y/n) : ");
-            // todo: Fini dont ton y ou n ici pis ca devrais etre beau. quoi que l'affaire cest que je me doute que je pourrais faire une fonction ca 
-            clan.Players = new List<int>();
-            string? playersInput = Console.ReadLine();
-            if (!string.IsNullOrEmpty(playersInput))
+            do
             {
-                string[] playerIds = playersInput.Split(' ');
-                foreach (string id in playerIds)
+                Console.Write("Enter year:");
+                clan.CreationYear = int.Parse(Console.ReadLine() ?? "0");
+                if (clan.CreationYear < YEAR_MINIMUM)
                 {
-                    if (int.TryParse(id, out int playerId))
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Enter a date after 2012");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+            } while (!(clan.CreationYear >= YEAR_MINIMUM));
+
+            do
+            {
+                Console.Write(
+                    "Available category: 0: Exploration, 1: Combat, 2: Trading, 3: Politics, 4: All\nEnter category:");
+                clan.Type = int.Parse(Console.ReadLine() ?? "0");
+                if (clan.Type < 0 && clan.Type > 4)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid category");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    switch(clan.Type)
                     {
-                        clan.Players.Add(playerId);
+                        case EXPLORATION:
+                            break;
+                        case COMBAT:
+                            break;
+                        case TRADING:
+                            break;
+                        case POLITICS:
+                            break;
+                        case ALL:
+                            break;
                     }
                 }
-            }
+            } while (clan.Type < EXPLORATION && clan.Type > ALL);
 
+            
+            do
+            {
+                Console.Write("Clan score:");
+                clan.Score = int.Parse(Console.ReadLine() ?? "0");
+                if (clan.Score < 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Score Invalid");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+            } while (clan.Score < 0);
+
+            string? userInputYesNoToaster = "";
+            do
+            {
+                Console.WriteLine("Do you want to add player(s)? (y/n) : ");
+                userInputYesNoToaster = Console.ReadLine();
+            } while (userInputYesNoToaster == null && userInputYesNoToaster != "y" && userInputYesNoToaster != "n" && userInputYesNoToaster != "Y" && userInputYesNoToaster != "N");
+
+            clan.Players = new List<int>();
+            string? playersInput = Console.ReadLine();
+            if ((playersInput != null) && (userInputYesNoToaster == "y" || userInputYesNoToaster == "y"))
+            {
+                string[] playerIds = playersInput.Split(',');
+                                foreach (string player in playerIds)
+                                {
+                                    if (int.TryParse(player, out int playerId))
+                                    {
+                                        clan.Players.Add(playerId);
+                                    }
+                                }
+            }
+            else
+            {
+                clan.Players =
+            }
             return clan;
         }
 
@@ -143,7 +205,7 @@ public static void Main(string[] args)
             for (int i = 0; i < clans.Count; i++)
             {
                 Clan clan = clans[i];
-                Console.WriteLine($"{i}) {clan.Name} - Année : {clan.CreationYear}, Type : {clan.Type}, Score : {clan.Score}, Joueurs : {string.Join(", ", clan.Players)}");
+                Console.WriteLine(String.Format($"{i}) {clan.Name, -25} {clan.CreationYear, -20} {clan.Type, 10}, Score : {clan.Score, 10}, Joueurs : {string.Join(", ", clan.Players), 10}"));
             }
         }
         public static string CreatePlayer()
@@ -151,13 +213,7 @@ public static void Main(string[] args)
             Console.Write("Nom du joueur : ");
             string name = Console.ReadLine() ?? "Sans Nom";
 
-            Console.Write("Classe du joueur : ");
-            string playerClass = Console.ReadLine() ?? "Sans Classe";
-
-            Console.Write("Niveau du joueur : ");
-            string level = Console.ReadLine() ?? "1";
-
-            return $"{name};{playerClass};{level}";
+            return $"{name}";
         }
 
     private static void WriteClansToFile(string filesClansCsv, List<Clan> allClans)

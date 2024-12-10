@@ -1,0 +1,17 @@
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\bin\Debug\net6.0\Files\players.csv
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\bin\Debug\net6.0\Files\clans.csv
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\bin\Debug\net6.0\TP3_ETU.exe
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\bin\Debug\net6.0\TP3_ETU.deps.json
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\bin\Debug\net6.0\TP3_ETU.runtimeconfig.json
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\bin\Debug\net6.0\TP3_ETU.dll
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\bin\Debug\net6.0\TP3_ETU.pdb
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\obj\Debug\net6.0\TP3_ETU.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\obj\Debug\net6.0\TP3_ETU.AssemblyInfoInputs.cache
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\obj\Debug\net6.0\TP3_ETU.AssemblyInfo.cs
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\obj\Debug\net6.0\TP3_ETU.csproj.CoreCompileInputs.cache
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\obj\Debug\net6.0\TP3_ETU.sourcelink.json
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\obj\Debug\net6.0\TP3_ETU.dll
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\obj\Debug\net6.0\refint\TP3_ETU.dll
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\obj\Debug\net6.0\TP3_ETU.pdb
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\obj\Debug\net6.0\TP3_ETU.genruntimeconfig.cache
+C:\Users\jefou\OneDrive\Desktop\EFCS-TP3----IntroProg\efcs-a2024-majeurbilly\TP3_ETU\obj\Debug\net6.0\ref\TP3_ETU.dll
