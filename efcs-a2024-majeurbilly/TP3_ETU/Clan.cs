@@ -2,11 +2,11 @@
 {
     public class Clan
     {
-        public string ClanName { get; set; }
-        public int ClanYear { get; set; }
-        public int ClanCategory { get; set; }
-        public int ClanScore { get; set; }
-        public List<int> ClanPlayers { get; set; }
+        public string Name { get; set; }
+        public int CreationYear { get; set; }
+        public int Type { get; set; }
+        public int Score { get; set; }
+        public List<int> Players { get; set; }
         // - Nom du clan (string)
         // - Année de création (int)
         // - Type de clan (int)

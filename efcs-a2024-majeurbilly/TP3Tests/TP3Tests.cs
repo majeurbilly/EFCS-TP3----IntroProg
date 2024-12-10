@@ -11,10 +11,10 @@ namespace TP3_ETU.Tests
             for (int i = 0; i < nbClans; i++)
             {
                 Clan clan = new Clan();
-                clan.ClanName = $"Titre {i}";
-                clan.ClanYear = 2012 + i;
-                clan.ClanCategory = (i % Program.ALL+1);
-                clan.ClanScore = i % 10;
+                clan.Name = $"Titre {i}";
+                clan.CreationYear = 2012 + i;
+                clan.Type = (i % Program.ALL+1);
+                clan.Score = i % 10;
                 clanList.Add(clan);
             }
             return clanList;
@@ -33,18 +33,18 @@ namespace TP3_ETU.Tests
 
 
             Clan clan = new Clan();
-            clan.ClanName = ANY_TITLE;
-            clan.ClanYear = ANY_YEAR;
-            clan.ClanCategory = ANY_ClanCategory;
-            clan.ClanScore = ANY_ClanScore;
+            clan.Name = ANY_TITLE;
+            clan.CreationYear = ANY_YEAR;
+            clan.Type = ANY_ClanCategory;
+            clan.Score = ANY_ClanScore;
 
             Library.InsertClan(allClans, clan);
 
             Assert.Single(allClans);
-            Assert.Equal(ANY_TITLE, allClans[DEFAULT_NB_CLANS].ClanName);
-            Assert.Equal(ANY_YEAR, allClans[DEFAULT_NB_CLANS].ClanYear);
-            Assert.Equal(ANY_ClanCategory, allClans[DEFAULT_NB_CLANS].ClanCategory);
-            Assert.Equal(ANY_ClanScore, allClans[DEFAULT_NB_CLANS].ClanScore);
+            Assert.Equal(ANY_TITLE, allClans[DEFAULT_NB_CLANS].Name);
+            Assert.Equal(ANY_YEAR, allClans[DEFAULT_NB_CLANS].CreationYear);
+            Assert.Equal(ANY_ClanCategory, allClans[DEFAULT_NB_CLANS].Type);
+            Assert.Equal(ANY_ClanScore, allClans[DEFAULT_NB_CLANS].Score);
         }
         [Fact]
         public void InsertClan_NullClan_Exception()
@@ -65,18 +65,18 @@ namespace TP3_ETU.Tests
             List<Clan> allClans = CreateClanList(DEFAULT_NB_CLANS);
 
             Clan clan = new Clan();
-            clan.ClanName = ANY_TITLE;
-            clan.ClanYear = ANY_YEAR;
-            clan.ClanCategory = ANY_ClanCategory;
-            clan.ClanScore = ANY_ClanScore;
+            clan.Name = ANY_TITLE;
+            clan.CreationYear = ANY_YEAR;
+            clan.Type = ANY_ClanCategory;
+            clan.Score = ANY_ClanScore;
 
             Library.InsertClan(allClans, clan);
 
             Assert.Equal(DEFAULT_NB_CLANS + 1, allClans.Count);
-            Assert.Equal(ANY_TITLE, allClans[DEFAULT_NB_CLANS].ClanName);
-            Assert.Equal(ANY_YEAR, allClans[DEFAULT_NB_CLANS].ClanYear);
-            Assert.Equal(ANY_ClanCategory, allClans[DEFAULT_NB_CLANS].ClanCategory);
-            Assert.Equal(ANY_ClanScore, allClans[DEFAULT_NB_CLANS].ClanScore);
+            Assert.Equal(ANY_TITLE, allClans[DEFAULT_NB_CLANS].Name);
+            Assert.Equal(ANY_YEAR, allClans[DEFAULT_NB_CLANS].CreationYear);
+            Assert.Equal(ANY_ClanCategory, allClans[DEFAULT_NB_CLANS].Type);
+            Assert.Equal(ANY_ClanScore, allClans[DEFAULT_NB_CLANS].Score);
         }
         [Fact]
         public void RemoveClan_ClanNumBiggerThanListSize_Exception()
@@ -134,10 +134,10 @@ namespace TP3_ETU.Tests
             const int ANY_ClanCategory = Program.COMBAT;
             const int ANY_ClanScore = 7;
             Clan clan = new Clan();
-            clan.ClanName = ANY_TITLE;
-            clan.ClanYear = ANY_YEAR;
-            clan.ClanCategory = ANY_ClanCategory;
-            clan.ClanScore = ANY_ClanScore;
+            clan.Name = ANY_TITLE;
+            clan.CreationYear = ANY_YEAR;
+            clan.Type = ANY_ClanCategory;
+            clan.Score = ANY_ClanScore;
 
             Library.UpdateClan(allClans, ANY_VALID_CLAN_NUM, clan);
 
