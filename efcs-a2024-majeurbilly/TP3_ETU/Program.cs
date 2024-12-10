@@ -52,7 +52,7 @@ namespace TP3_ETU
                     {
                         Clan newClan = CreateClan();
                         Library.InsertClan(allClans, newClan);
-                        Console.WriteLine("Clan ajouté avec succès !");
+                        Console.WriteLine("Clan added successfully !");
                     }
                     else if (choice == UPDATE_CLAN)
                     {
@@ -114,8 +114,18 @@ namespace TP3_ETU
         {
             // nom du clan
             Clan clan = new Clan();
-            Console.Write("Enter clan name: ");
-            clan.Name = Console.ReadLine() ?? "Sans Nom";
+            do
+            {
+                Console.Write("Enter clan name: ");
+                clan.Name = Console.ReadLine();
+                if (clan.Name == "")
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Please enter any name: ");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+            } while (clan.Name == "");
+            
 
             // year 
             do
@@ -128,7 +138,7 @@ namespace TP3_ETU
                     Console.WriteLine("Enter a date after 2012");
                     Console.ForegroundColor = ConsoleColor.White;
                 }
-            } while (!(clan.CreationYear >= YEAR_MINIMUM));
+            } while ((clan.CreationYear < YEAR_MINIMUM));
             
             // type
             do
