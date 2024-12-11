@@ -34,6 +34,8 @@ namespace TP3_ETU
         private const string TYPE_QUESTION = "Enter category: ";
         private const string TYPE_ERROR = "Category Invalid: ";
         private const string ADD_PLAYER_QUESTION = "Do you want to add player(s) (Y or N)? ";
+        private const string ZERO_PLAYER_QUESTION = "Enter player id: ";
+        private const string ADDITIONAL_PLAYER_QUESTION = $"Enter player id (press Enter to leave {}): ";
 
 
         public static void Main(string[] args)
@@ -120,10 +122,8 @@ namespace TP3_ETU
 
         public static Clan CreateClan()
         {
-            // nom du clan ✅
+            // nom du clan 
             string clanName = AskQuestionString(NAME_QUESTION, NAME_ERROR);
-
-
             // year 
             int clanYear = AskQuestionInt(YEAR_QUESTION, INT_ERROR, isYearQuestion: true);
             // type
@@ -139,10 +139,13 @@ namespace TP3_ETU
             {
                 for (int i = 0; i < CLANS_FILE.Length; i++)
                 {
-                    Console.Write(String.Format($"{i,5} {CLANS_FILE[i]}"));
+                    Console.WriteLine(String.Format($"{i,5} {CLANS_FILE[i]}"));
                 }
 
-                int selectPlayer = SelectPlayer(CLANS_FILE.Length);
+                if (CLANS_FILE.Length == 0)
+                {
+                    int selectPlayer = SelectPlayer(CLANS_FILE.Length);
+                }
             }
 
 
@@ -227,15 +230,30 @@ namespace TP3_ETU
             string idSelected = "";
             do
             {
-                Console.WriteLine("Enter player id: ");
+                if (playerChoice == 0)
+                {
+                    Console.WriteLine(ZERO_PLAYER_QUESTION);
+                }
+                else
+                {
+                    Console.WriteLine(ADDITIONAL_PLAYER_QUESTION);
+                }
                 idSelected = Console.ReadLine() ?? string.Empty;
-                if (!int.TryParse(idSelected, out playerChoice) && playerChoice > playersCount &&
-                    idSelected == string.Empty)
+                if (!int.TryParse(idSelected, out playerChoice) || playerChoice > playersCount ||
+                    playerChoice < 0 && idSelected == string.Empty)
                 {
                     Console.WriteLine("Error id");
+                    idSelected = "";
+                    playerChoice = -1;
                     // todo: assurer que je suis encore true
                 }
-            } while (true);
+/////////////////////////////rendu ici///////////////////////////////////////////////////////
+
+                idSelected += $", ";
+            } while (!int.TryParse(idSelected, out playerChoice) || playerChoice > playersCount || playerChoice < 0 ||
+                     idSelected == string.Empty);
+
+            return playerChoice;
         }
 
         private static string AskQuestionString(string question, string error)
