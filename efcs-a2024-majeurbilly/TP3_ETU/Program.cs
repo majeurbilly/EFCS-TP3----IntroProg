@@ -122,68 +122,64 @@ namespace TP3_ETU
         {
             // nom du clan ✅
             string clanName = AskQuestionString(NAME_QUESTION, NAME_ERROR);
-            
+
 
             // year 
-            int clanYear = AskQuestionInt(YEAR_QUESTION, INT_ERROR, true);
+            int clanYear = AskQuestionInt(YEAR_QUESTION, INT_ERROR, isYearQuestion: true);
             // type
-            Console.Write("Available category: 0: Exploration, 1: Combat, 2: Trading, 3: Politics, 4: All\nEnter category: ");
-            int clanType = AskQuestionInt(TYPE_QUESTION, INT_ERROR, false, true);
+            Console.Write(
+                "Available category: 0: Exploration, 1: Combat, 2: Trading, 3: Politics, 4: All\nEnter category: ");
+            int clanType = AskQuestionInt(TYPE_QUESTION, INT_ERROR, isType: true);
             // score 
             int clanScore = AskQuestionInt(TYPE_QUESTION, INT_ERROR);
             // y or n for wanna add player
             bool AddPlayer = AskQuestionBool(ADD_PLAYER_QUESTION);
             // playeurs choice
-            for (int i = 0; i < CLANS_FILE.Length; i++)
+            if (AddPlayer)
             {
-                Console.Write(String.Format($"{i, 5} {CLANS_FILE[i]}"));
+                for (int i = 0; i < CLANS_FILE.Length; i++)
+                {
+                    Console.Write(String.Format($"{i,5} {CLANS_FILE[i]}"));
+                }
+
+                int selectPlayer = SelectPlayer(CLANS_FILE.Length);
             }
-            int playerChoice = -1;
-            while (playerChoice < 0 && playerChoice > CLANS_FILE.Length - 1)
 
 
             do
             {
-                
                 // todo: ici le Parse fait sortir un 0 au lieu ou un null
                 string category = Console.ReadLine();
-                
-                
-                
-                
-                
-                
-                
+
+
                 if (category == "")
                 {
-                    
                 }
 
                 int.TryParse(Console.ReadLine(), out int inputUser);
-                    clan.Type = inputUser;
+                clan.Type = inputUser;
 
-                    if (clan.Type < 0 && clan.Type > 4)
+                if (clan.Type < 0 && clan.Type > 4)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid category");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    switch (clan.Type)
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Invalid category");
-                        Console.ForegroundColor = ConsoleColor.White;
+                        case EXPLORATION:
+                            break;
+                        case COMBAT:
+                            break;
+                        case TRADING:
+                            break;
+                        case POLITICS:
+                            break;
+                        case ALL:
+                            break;
                     }
-                    else
-                    {
-                        switch (clan.Type)
-                        {
-                            case EXPLORATION:
-                                break;
-                            case COMBAT:
-                                break;
-                            case TRADING:
-                                break;
-                            case POLITICS:
-                                break;
-                            case ALL:
-                                break;
-                        }
-                    
                 }
             } while (clan.Type < 0 && clan.Type > 4);
 
@@ -225,6 +221,23 @@ namespace TP3_ETU
             return clan;
         }
 
+        private static int SelectPlayer(int playersCount)
+        {
+            int playerChoice = -1;
+            string idSelected = "";
+            do
+            {
+                Console.WriteLine("Enter player id: ");
+                idSelected = Console.ReadLine() ?? string.Empty;
+                if (!int.TryParse(idSelected, out playerChoice) && playerChoice > playersCount &&
+                    idSelected == string.Empty)
+                {
+                    Console.WriteLine("Error id");
+                    // todo: assurer que je suis encore true
+                }
+            } while (true);
+        }
+
         private static string AskQuestionString(string question, string error)
         {
             string answer = string.Empty;
@@ -234,7 +247,6 @@ namespace TP3_ETU
                 string input = Console.ReadLine() ?? string.Empty;
                 if (input == string.Empty)
                 {
-                    
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine(error);
                     Console.ForegroundColor = ConsoleColor.White;
@@ -244,9 +256,12 @@ namespace TP3_ETU
                     answer = input;
                 }
             } while (answer == string.Empty);
+
             return answer;
         }
-        private static int AskQuestionInt(string question, string error, bool isYearQuestion = false, bool isType = false)
+
+        private static int AskQuestionInt(string question, string error, bool isYearQuestion = false,
+            bool isType = false)
         {
             int answer = -1;
             do
@@ -254,7 +269,6 @@ namespace TP3_ETU
                 Console.Write(question);
                 if (!int.TryParse(Console.ReadLine(), out int input))
                 {
-                    
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine(error);
                     Console.ForegroundColor = ConsoleColor.White;
@@ -282,36 +296,39 @@ namespace TP3_ETU
                             Console.ForegroundColor = ConsoleColor.White;
                         }
                     }
+
                     answer = input;
                 }
             } while (answer == -1);
+
             return answer;
         }
 
         public static bool AskQuestionBool(string question)
         {
             bool answer = false;
+            bool valid = false;
             Console.Write(question);
-            while (true)
+            while (!valid)
             {
                 string input = Console.ReadLine();
                 if (input != null && input == "y")
                 {
                     answer = true;
-                    break;
+                    valid = true;
                 }
-                else if ( input != null && input == "n")
+                else if (input != null && input == "n")
                 {
                     answer = false;
-                    break;
+                    valid = true;
                 }
                 else
                 {
                     Console.Write("Only y or n Allowed");
                 }
             }
+
             return answer;
-            } 
         }
 
         public static void ListAllClans(List<Clan> clans)
