@@ -26,6 +26,14 @@ namespace TP3_ETU
 
         public const int YEAR_MINIMUM = 2012;
         public readonly List<char> VALIDATION_YES_NO_TOASTER = new List<char> { 'y', 'Y', 'n', 'N' };
+        private const string NAME_QUESTION = "Enter clan name: ";
+        private const string NAME_ERROR = "Please enter any name: ";
+        private const string YEAR_QUESTION = "Enter year: ";
+        private const string YEAR_ERROR_UNDER_2012 = "Enter a date after 2012";
+        private const string INT_ERROR = "Enter a valid number in decimal format";
+        private const string TYPE_QUESTION = "Enter category: ";
+        private const string TYPE_ERROR = "Category Invalid: ";
+        private const string ADD_PLAYER_QUESTION = "Do you want to add player(s) (Y or N)? ";
 
 
         public static void Main(string[] args)
@@ -112,41 +120,40 @@ namespace TP3_ETU
 
         public static Clan CreateClan()
         {
-            // nom du clan
-            Clan clan = new Clan();
-            do
-            {
-                Console.Write("Enter clan name: ");
-                clan.Name = Console.ReadLine();
-                if (clan.Name == "")
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Please enter any name: ");
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-            } while (clan.Name == "");
+            // nom du clan ✅
+            string clanName = AskQuestionString(NAME_QUESTION, NAME_ERROR);
             
 
             // year 
-            do
-            {
-                Console.Write("Enter year:");
-                clan.CreationYear = int.Parse(Console.ReadLine() ?? "0");
-                if (clan.CreationYear < YEAR_MINIMUM)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Enter a date after 2012");
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-            } while ((clan.CreationYear < YEAR_MINIMUM));
-            
+            int clanYear = AskQuestionInt(YEAR_QUESTION, INT_ERROR, true);
             // type
+            Console.Write("Available category: 0: Exploration, 1: Combat, 2: Trading, 3: Politics, 4: All\nEnter category: ");
+            int clanType = AskQuestionInt(TYPE_QUESTION, INT_ERROR, false, true);
+            // score 
+            int clanScore = AskQuestionInt(TYPE_QUESTION, INT_ERROR);
+            // y or n for wanna add player
+            bool AddPlayer = AskQuestionBool(ADD_PLAYER_QUESTION);
+            // playeurs choice
+            for (int i = 0; i < CLANS_FILE.Length; i++)
+            {
+                Console.Write(String.Format($"{i, 5} {CLANS_FILE[i]}"));
+            }
+            int playerChoice = -1;
+            while (playerChoice < 0 && playerChoice > CLANS_FILE.Length - 1)
+
+
             do
             {
-                Console.Write(
-                    "Available category: 0: Exploration, 1: Combat, 2: Trading, 3: Politics, 4: All\nEnter category: ");
+                
                 // todo: ici le Parse fait sortir un 0 au lieu ou un null
                 string category = Console.ReadLine();
+                
+                
+                
+                
+                
+                
+                
                 if (category == "")
                 {
                     
@@ -216,6 +223,95 @@ namespace TP3_ETU
             }
 
             return clan;
+        }
+
+        private static string AskQuestionString(string question, string error)
+        {
+            string answer = string.Empty;
+            do
+            {
+                Console.Write(question);
+                string input = Console.ReadLine() ?? string.Empty;
+                if (input == string.Empty)
+                {
+                    
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(error);
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    answer = input;
+                }
+            } while (answer == string.Empty);
+            return answer;
+        }
+        private static int AskQuestionInt(string question, string error, bool isYearQuestion = false, bool isType = false)
+        {
+            int answer = -1;
+            do
+            {
+                Console.Write(question);
+                if (!int.TryParse(Console.ReadLine(), out int input))
+                {
+                    
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(error);
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    if (isYearQuestion)
+                    {
+                        if (input < YEAR_MINIMUM)
+                        {
+                            input = -1;
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(YEAR_ERROR_UNDER_2012);
+                            Console.ForegroundColor = ConsoleColor.White;
+                        }
+                    }
+
+                    if (isType)
+                    {
+                        if (input < EXPLORATION && input > ALL)
+                        {
+                            input = -1;
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(TYPE_ERROR);
+                            Console.ForegroundColor = ConsoleColor.White;
+                        }
+                    }
+                    answer = input;
+                }
+            } while (answer == -1);
+            return answer;
+        }
+
+        public static bool AskQuestionBool(string question)
+        {
+            bool answer = false;
+            Console.Write(question);
+            while (true)
+            {
+                string input = Console.ReadLine();
+                if (input != null && input == "y")
+                {
+                    answer = true;
+                    break;
+                }
+                else if ( input != null && input == "n")
+                {
+                    answer = false;
+                    break;
+                }
+                else
+                {
+                    Console.Write("Only y or n Allowed");
+                }
+            }
+            return answer;
+            } 
         }
 
         public static void ListAllClans(List<Clan> clans)
