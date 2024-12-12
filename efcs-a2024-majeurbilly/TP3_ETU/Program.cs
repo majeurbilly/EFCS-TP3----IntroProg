@@ -37,6 +37,10 @@ namespace TP3_ETU
         private const string ADD_PLAYER_QUESTION = "Do you want to add player(s) (Y or N)? ";
         private const string ZERO_PLAYER_QUESTION = "Enter player id: ";
         public const string MESSAGE_ERROR = "Incorrect value.";
+        const string UPDATE_QUESTION = "Enter clan to update(-1 to cancel): ";
+
+        private const string TYPE_MENU =
+            "Available category: 0: Exploration, 1: Combat, 2: Trading, 3: Politics, 4: All";
 
 
         public static void Main(string[] args)
@@ -49,7 +53,7 @@ namespace TP3_ETU
             {
                 Console.Clear();
                 DisplayMenu();
-                Console.Write("Votre choix : ");
+                Console.Write("Your choice : ");
                 string input = Console.ReadLine() ?? String.Empty;
                 int choice;
 
@@ -68,6 +72,8 @@ namespace TP3_ETU
                     }
                     else if (choice == UPDATE_CLAN)
                     {
+                        DisplayAllClans(allClans);
+                        UpdateClan(allClans);
                         Console.Write("Entrer l'index du clan à modifier : ");
                         int index = int.Parse(Console.ReadLine() ?? "0");
                         Clan updatedClan = AddClan();
@@ -83,7 +89,7 @@ namespace TP3_ETU
                     }
                     else if (choice == LIST_ALL_CLAN)
                     {
-                        ListAllClans(allClans);
+                        DisplayAllClans(allClans);
                     }
                     else if (choice == ADD_PLAYER)
                     {
@@ -110,6 +116,35 @@ namespace TP3_ETU
             }
         }
 
+        private static void UpdateClan(List<Clan> allClans)
+        {
+            do
+            {
+                int inputUser = AskQuestionInt(UPDATE_QUESTION, INT_ERROR);
+                if (inputUser == -1)
+                {
+                    //todo: break
+                }
+                else if (inputUser < 0 && inputUser > allClans.Count)
+                {
+                    //todo: break
+                }
+                else
+                {
+                    string newClanName = AskQuestionString($"Enter clan name(press Enter to leave {allClans[inputUser].Name}", "error420");
+                    while (!int.TryParse( AskQuestionString($"Enter year (press Enter to leave {allClans[inputUser].CreationYear}", INT_ERROR), out int newClanYear) && newClanYear < YEAR_MINIMUM && newClanYear.ToString() != string.Empty);
+                    //todo: ta tu pris de la drogue?
+                   
+                    Console.WriteLine($"{TYPE_MENU}\nEnter category(press Enter to leave {allClans[inputUser].Type}): ");
+                    string newClanType =
+                        AskQuestionString(
+                            $"{TYPE_MENU}\nEnter category(press Enter to leave {allClans[inputUser].Type}): ",
+                            MESSAGE_ERROR);
+
+                }
+            } while (true);
+        }
+        
         public static void DisplayMenu()
         {
             Console.Clear();
@@ -121,15 +156,15 @@ namespace TP3_ETU
             Console.WriteLine("4) List all clans");
             Console.WriteLine("5) Add a player");
         }
+
         public static Clan AddClan()
         {
-            string clanName = AskQuestionString(NAME_QUESTION, NAME_ERROR);
+            string clanName = AskQuestionString(NAME_QUESTION, NAME_ERROR, isNameQuestion: true);
             int clanYear = AskQuestionInt(YEAR_QUESTION, MESSAGE_ERROR, isYearQuestion: true);
-            Console.Write(
-                "Available category: 0: Exploration, 1: Combat, 2: Trading, 3: Politics, 4: All\nEnter category: ");
+            Console.Write($"{TYPE_MENU}\nEnter category: ");
             int clanType = AskQuestionInt(TYPE_QUESTION, MESSAGE_ERROR, isType: true);
             int clanScore = AskQuestionInt(SCORE_QUESTION, MESSAGE_ERROR);
-            bool AddPlayer = AskQuestionBool(ADD_PLAYER_QUESTION);
+            bool AddPlayer = AskQuestionBool(ADD_PLAYER_QUESTION, isYesNoQuestion: true);
             List<int> clanPlayer = new List<int>();
             if (AddPlayer)
             {
@@ -142,6 +177,7 @@ namespace TP3_ETU
                         Console.WriteLine($"Player #{i.ToString()}: {linesToWrite[i]}");
                     }
                 }
+
                 clanPlayer = SelectPlayer(linesToWrite.Length);
             }
 
@@ -153,7 +189,6 @@ namespace TP3_ETU
                 Score = clanScore,
                 Players = clanPlayer
             };
-
         }
 
         private static List<int> SelectPlayer(int playersCount)
@@ -186,37 +221,40 @@ namespace TP3_ETU
                         userInput = string.Empty;
                         playerChoice = -1;
                     }
-                    
                 }
-                else 
+                else
                 {
-                    selectedIds.Add(playerChoice); 
+                    selectedIds.Add(playerChoice);
                     userInput = string.Empty;
                     playerChoice = -1;
-                    
                 }
-               
             } while (userInput == string.Empty);
 
             return selectedIds;
         }
 
-        private static string AskQuestionString(string question, string error)
+        private static string AskQuestionString(string question, string error, bool isNameQuestion = false)
         {
             string answer = string.Empty;
+            bool validAnswer = true;
             do
             {
                 Console.Write(question);
                 string input = Console.ReadLine() ?? string.Empty;
-                if (input == string.Empty)
+                if (isNameQuestion)
                 {
-                    MessageError(error);
+                    if (input == string.Empty)
+                    {
+                        MessageError(error);
+                        validAnswer = false;
+                    }
+                    else
+                    {
+                        answer = input;
+                        validAnswer = true;
+                    }
                 }
-                else
-                {
-                    answer = input;
-                }
-            } while (answer == string.Empty);
+            } while (!validAnswer);
 
             return answer;
         }
@@ -229,7 +267,7 @@ namespace TP3_ETU
         }
 
         private static int AskQuestionInt(string question, string error, bool isYearQuestion = false,
-            bool isType = false)
+            bool isType = false, bool isUpadte = false)
         {
             int answer = -1;
             do
@@ -266,42 +304,48 @@ namespace TP3_ETU
             return answer;
         }
 
-        public static bool AskQuestionBool(string question)
+        public static bool AskQuestionBool(string question, bool isYesNoQuestion = false)
         {
             bool answer = false;
             bool valid = false;
             while (!valid)
             {
                 Console.Write(question);
-                string input = Console.ReadLine();
-                if (input != null && input == "y" || input == "Y")
+                string input = Console.ReadLine() ?? string.Empty;
+                if (isYesNoQuestion)
                 {
-                    answer = true;
-                    valid = true;
+                    if (input != null && input == "y" || input == "Y")
+                    {
+                        answer = true;
+                        valid = true;
+                    }
+                    else if (input != null && input == "n" || input == "N")
+                    {
+                        answer = false;
+                        valid = true;
+                    }
+                    else
+                    {
+                        MessageError("Only y or n Allowed");
+                    }
                 }
-                else if (input != null && input == "n" || input == "N")
+                else if (input == string.Empty)
                 {
                     answer = false;
-                    valid = true;
-                }
-                else
-                {
-                    MessageError("Only y or n Allowed");
                 }
             }
 
             return answer;
         }
 
-        public static void ListAllClans(List<Clan> clans)
+        public static void DisplayAllClans(List<Clan> clans)
         {
-            Console.Clear();
-            Console.WriteLine("Liste des clans : ");
             for (int i = 0; i < clans.Count; i++)
             {
                 Clan clan = clans[i];
                 Console.WriteLine(String.Format(
-                    $"{i}) {clan.Name,-25} {clan.CreationYear,-20} {clan.Type,10}, Score : {clan.Score,10}, Joueurs : {string.Join(", ", clan.Players),10}"));
+                    $"{i,5}- {clan.Name,-25} {clan.CreationYear,-20} {clan.Type,10}, Score : {clan.Score,10}, Joueurs : {string.Join(", ", clan.Players),10}"));
+                //todo: aligne moi ca 
             }
         }
 
