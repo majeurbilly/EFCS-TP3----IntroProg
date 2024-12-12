@@ -99,9 +99,7 @@ namespace TP3_ETU
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Veuillez entrer un numéro valide.");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    MessageError("Veuillez entrer un numéro valide.");
                 }
 
                 Console.WriteLine("\nAppuyez sur une touche pour continuer...");
