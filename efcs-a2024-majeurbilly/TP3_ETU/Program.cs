@@ -116,35 +116,6 @@ namespace TP3_ETU
             }
         }
 
-        private static void UpdateClan(List<Clan> allClans)
-        {
-            do
-            {
-                int inputUser = AskQuestionInt(UPDATE_QUESTION, INT_ERROR);
-                if (inputUser == -1)
-                {
-                    //todo: break
-                }
-                else if (inputUser < 0 && inputUser > allClans.Count)
-                {
-                    //todo: break
-                }
-                else
-                {
-                    string newClanName = AskQuestionString($"Enter clan name(press Enter to leave {allClans[inputUser].Name}", "error420");
-                    while (!int.TryParse( AskQuestionString($"Enter year (press Enter to leave {allClans[inputUser].CreationYear}", INT_ERROR), out int newClanYear) && newClanYear < YEAR_MINIMUM && newClanYear.ToString() != string.Empty);
-                    //todo: ta tu pris de la drogue?
-                   
-                    Console.WriteLine($"{TYPE_MENU}\nEnter category(press Enter to leave {allClans[inputUser].Type}): ");
-                    string newClanType =
-                        AskQuestionString(
-                            $"{TYPE_MENU}\nEnter category(press Enter to leave {allClans[inputUser].Type}): ",
-                            MESSAGE_ERROR);
-
-                }
-            } while (true);
-        }
-        
         public static void DisplayMenu()
         {
             Console.Clear();
@@ -163,10 +134,11 @@ namespace TP3_ETU
             int clanYear = AskQuestionInt(YEAR_QUESTION, MESSAGE_ERROR, isYearQuestion: true);
             Console.Write($"{TYPE_MENU}\nEnter category: ");
             int clanType = AskQuestionInt(TYPE_QUESTION, MESSAGE_ERROR, isType: true);
-            int clanScore = AskQuestionInt(SCORE_QUESTION, MESSAGE_ERROR);
-            bool AddPlayer = AskQuestionBool(ADD_PLAYER_QUESTION, isYesNoQuestion: true);
+            int clanScore = AskQuestionInt(SCORE_QUESTION, MESSAGE_ERROR, isScoreQuestion: true);
+            bool addPlayer = AskQuestionBool(ADD_PLAYER_QUESTION, isYesNoQuestion: true);
             List<int> clanPlayer = new List<int>();
-            if (AddPlayer)
+
+            if (addPlayer)
             {
                 string[] linesToWrite = ReadFile(PLAYERS_FILE);
                 if (linesToWrite.Length > 0)
@@ -191,46 +163,127 @@ namespace TP3_ETU
             };
         }
 
-        private static List<int> SelectPlayer(int playersCount)
+        private static void UpdateClan(List<Clan> allClans)
         {
-            int playerChoice = -1;
-            List<int> selectedIds = new List<int> { };
-            string userInput = string.Empty;
+            
+                int clanSelected = AskQuestionClanId(allClans);
+                if (clanSelected == -1)
+                {
+                    break;
+                }
+                string newNameUpadate = AskQuestionNameUpdate(allClans[clanSelected].Name);
+                int newYearUpadte = AskQuestionYearUpadate(allClans[clanSelected].CreationYear);
+                int newTypeUpadate = AskQuestionTypeUpdate(allClans[clanSelected].Type);
+                int newScore = AskQuestionScoreUpadte(allClans[clanSelected].Score);
+                bool addPlayer = AskQuestionBool(ADD_PLAYER_QUESTION, isYesNoQuestion: true);
+                List<int> newClanPlayer = allClans[clanSelected].Players;
+                string[] linesToWrite = ReadFile(PLAYERS_FILE);
+                if (addPlayer)
+                {
+                    Console.WriteLine($"Players found: {linesToWrite.Length}");
+                    for (int i = 0; i < linesToWrite.Length; i++)
+                    {
+                        Console.WriteLine($"Player #{i.ToString()}: {linesToWrite[i]}");
+                    }
+                    
+                }
+                
+        }
+
+        private static int AskQuestionScoreUpadte(int scoreSelected)
+        {
+            Console.WriteLine($"Enter score(press Enter to leave {scoreSelected}): ");
+            string input = string.Empty;
+            int newScore = -1;
             do
             {
-                if (selectedIds.Count == 0)
+                input = Console.ReadLine() ?? string.Empty;
+                if (!int.TryParse(input, out newScore))
                 {
-                    Console.Write(ZERO_PLAYER_QUESTION);
+                    MessageError(INT_ERROR);
+                    newScore = -1;
+                }
+            } while (newScore > 0 && newScore < 10000);
+            return newScore;
+            
+        }
+
+        private static int AskQuestionTypeUpdate(int typeSelected)
+        {
+            Console.WriteLine(TYPE_MENU);
+            Console.WriteLine($"Enter category(press Enter to leave {typeSelected}): ");
+            string input = string.Empty;
+            int newType = -1;
+            do
+            {
+                input = Console.ReadLine() ?? string.Empty;
+                if (!int.TryParse(input, out newType))
+                {
+                    MessageError(INT_ERROR);
+                    newType = -1;
+                }
+            } while (newType < EXPLORATION && newType > ALL);
+            
+            return newType;
+        }
+
+        private static int AskQuestionYearUpadate(int creationYearSelected)
+        {
+            Console.WriteLine($"Enter year(press Enter to leave {creationYearSelected}): ");
+            int yearUpadate = -1;
+            string input = string.Empty;
+            do
+            {
+                input = Console.ReadLine() ?? string.Empty;
+                if (!int.TryParse(input, out yearUpadate))
+                {
+                    MessageError(INT_ERROR);
+                    yearUpadate = -1;
+                }
+            } while (yearUpadate < YEAR_MINIMUM);
+            return yearUpadate;
+        }
+
+        private static string AskQuestionNameUpdate(string clanSelected)
+        {
+            Console.WriteLine($"Enter clan name(press Enter to leave {clanSelected}): ");
+            string clanName = Console.ReadLine() ?? string.Empty;
+            return clanName;
+        }
+
+        private static int AskQuestionClanId(List<Clan> allClans)
+        {
+            int maxValueInput = allClans.Count - 1;
+            int clanId;
+            bool validInput = true;
+            
+            DisplayAllClans(allClans);
+            do
+            {
+                Console.WriteLine(UPDATE_QUESTION);
+                string input = Console.ReadLine() ?? String.Empty;
+                if (!int.TryParse(input, out clanId) && clanId > maxValueInput && clanId < -2)
+                {
+                    MessageError(INT_ERROR);
+                    validInput = false;
                 }
                 else
                 {
-                    Console.Write($"Enter player id (press Enter to leave {string.Join(", ", selectedIds)}):: ");
+                    validInput = true;
                 }
+            } while (!validInput);
+            return clanId ;
+        }
 
-                userInput = Console.ReadLine() ?? string.Empty;
-                if (!int.TryParse(userInput, out playerChoice) || playerChoice > playersCount - 1 ||
-                    playerChoice < 0)
-                {
-                    if (selectedIds.Count != 0 && userInput == string.Empty)
-                    {
-                        return selectedIds;
-                    }
-                    else
-                    {
-                        MessageError("Error id");
-                        userInput = string.Empty;
-                        playerChoice = -1;
-                    }
-                }
-                else
-                {
-                    selectedIds.Add(playerChoice);
-                    userInput = string.Empty;
-                    playerChoice = -1;
-                }
-            } while (userInput == string.Empty);
-
-            return selectedIds;
+        public static void DisplayAllClans(List<Clan> clans)
+        {
+            for (int i = 0; i < clans.Count; i++)
+            {
+                Clan clan = clans[i];
+                Console.WriteLine(String.Format(
+                    $"{i,5}- {clan.Name,-25} {clan.CreationYear,-20} {clan.Type,10}, Score : {clan.Score,10}, Joueurs : {string.Join(", ", clan.Players),10}"));
+                //todo: aligne moi ca 
+            }
         }
 
         private static string AskQuestionString(string question, string error, bool isNameQuestion = false)
@@ -259,15 +312,8 @@ namespace TP3_ETU
             return answer;
         }
 
-        public static void MessageError(string errorMessage)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(errorMessage);
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-
         private static int AskQuestionInt(string question, string error, bool isYearQuestion = false,
-            bool isType = false, bool isUpadte = false)
+            bool isType = false, bool isScoreQuestion = false)
         {
             int answer = -1;
             do
@@ -287,8 +333,7 @@ namespace TP3_ETU
                             MessageError(YEAR_ERROR_UNDER_2012);
                         }
                     }
-
-                    if (isType)
+                    else if (isType)
                     {
                         if (input < EXPLORATION || input > ALL)
                         {
@@ -296,12 +341,28 @@ namespace TP3_ETU
                             MessageError(error);
                         }
                     }
+                    else if (isScoreQuestion)
+                    {
+                        if (input < EXPLORATION || input > 10000)
+                        {
+                            input = -1;
+                            MessageError(error);
+                        }
+                    }
+                    
 
                     answer = input;
                 }
             } while (answer == -1);
 
             return answer;
+        }
+
+        public static void MessageError(string errorMessage)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(errorMessage);
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         public static bool AskQuestionBool(string question, bool isYesNoQuestion = false)
@@ -338,15 +399,47 @@ namespace TP3_ETU
             return answer;
         }
 
-        public static void DisplayAllClans(List<Clan> clans)
+        private static List<int> SelectPlayer(int playersCount)
         {
-            for (int i = 0; i < clans.Count; i++)
+            int playerChoice = -1;
+            List<int> selectedIds = new List<int> { };
+            string userInput = string.Empty;
+            do
             {
-                Clan clan = clans[i];
-                Console.WriteLine(String.Format(
-                    $"{i,5}- {clan.Name,-25} {clan.CreationYear,-20} {clan.Type,10}, Score : {clan.Score,10}, Joueurs : {string.Join(", ", clan.Players),10}"));
-                //todo: aligne moi ca 
-            }
+                if (selectedIds.Count == 0)
+                {
+                    Console.Write(ZERO_PLAYER_QUESTION);
+                }
+                else
+                {
+                    Console.Write(
+                        $"Enter player id (press Enter to leave {string.Join(", ", selectedIds)}):: ");
+                }
+
+                userInput = Console.ReadLine() ?? string.Empty;
+                if (!int.TryParse(userInput, out playerChoice) || playerChoice > playersCount - 1 ||
+                    playerChoice < 0)
+                {
+                    if (selectedIds.Count != 0 && userInput == string.Empty)
+                    {
+                        return selectedIds;
+                    }
+                    else
+                    {
+                        MessageError("Error id");
+                        userInput = string.Empty;
+                        playerChoice = -1;
+                    }
+                }
+                else
+                {
+                    selectedIds.Add(playerChoice);
+                    userInput = string.Empty;
+                    playerChoice = -1;
+                }
+            } while (userInput == string.Empty);
+
+            return selectedIds;
         }
 
         public static string CreatePlayer()
@@ -356,6 +449,8 @@ namespace TP3_ETU
 
             return $"{name}";
         }
+
+        #region FILE ACCESS
 
         private static void WriteClansToFile(string filesClansCsv, List<Clan> allClans)
         {
@@ -370,7 +465,6 @@ namespace TP3_ETU
             WriteFile(filesClansCsv, allLines);
         }
 
-        #region FILE ACCESS
 
         // PROF : vous aurez peut-être à modifier les noms des propriétés suivantes.
 
