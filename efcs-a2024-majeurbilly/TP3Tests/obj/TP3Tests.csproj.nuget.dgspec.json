@@ -13,7 +13,6 @@
         "packagesPath": "C:\\Users\\jefou\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\jefou\\OneDrive\\Desktop\\EFCS-TP3----IntroProg\\efcs-a2024-majeurbilly\\TP3Tests\\obj\\",
         "projectStyle": "PackageReference",
-        "UsingMicrosoftNETSdk": false,
         "configFilePaths": [
           "C:\\Users\\jefou\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
@@ -110,7 +109,6 @@
         "packagesPath": "C:\\Users\\jefou\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\jefou\\OneDrive\\Desktop\\EFCS-TP3----IntroProg\\efcs-a2024-majeurbilly\\TP3_ETU\\obj\\",
         "projectStyle": "PackageReference",
-        "UsingMicrosoftNETSdk": false,
         "configFilePaths": [
           "C:\\Users\\jefou\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TP3_ETU")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+03e181c644c119c7b8b762489cb4a41978bbe276")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e5a5b7bafedc3396b4bd48a0edb5655a17d388d7")]
 [assembly: System.Reflection.AssemblyProductAttribute("TP3_ETU")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TP3_ETU")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

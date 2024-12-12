@@ -33,9 +33,10 @@ namespace TP3_ETU
         private const string INT_ERROR = "Enter a valid number in decimal format";
         private const string TYPE_QUESTION = "Enter category: ";
         private const string TYPE_ERROR = "Category Invalid: ";
+        private const string SCORE_QUESTION = "Enter score: ";
         private const string ADD_PLAYER_QUESTION = "Do you want to add player(s) (Y or N)? ";
         private const string ZERO_PLAYER_QUESTION = "Enter player id: ";
-        private const string ADDITIONAL_PLAYER_QUESTION = $"Enter player id (press Enter to leave {}): ";
+        public const string MESSAGE_ERROR = "Incorrect value.";
 
 
         public static void Main(string[] args)
@@ -46,6 +47,7 @@ namespace TP3_ETU
 
             while (!exit)
             {
+                Console.Clear();
                 DisplayMenu();
                 Console.Write("Votre choix : ");
                 string input = Console.ReadLine() ?? String.Empty;
@@ -60,7 +62,7 @@ namespace TP3_ETU
                     }
                     else if (choice == ADD_CLAN)
                     {
-                        Clan newClan = CreateClan();
+                        Clan newClan = AddClan();
                         Library.InsertClan(allClans, newClan);
                         Console.WriteLine("Clan added successfully !");
                     }
@@ -68,7 +70,7 @@ namespace TP3_ETU
                     {
                         Console.Write("Entrer l'index du clan à modifier : ");
                         int index = int.Parse(Console.ReadLine() ?? "0");
-                        Clan updatedClan = CreateClan();
+                        Clan updatedClan = AddClan();
                         Library.UpdateClan(allClans, index, updatedClan);
                         Console.WriteLine("Clan mis à jour !");
                     }
@@ -97,7 +99,9 @@ namespace TP3_ETU
                 }
                 else
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Veuillez entrer un numéro valide.");
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
 
                 Console.WriteLine("\nAppuyez sur une touche pour continuer...");
@@ -120,140 +124,89 @@ namespace TP3_ETU
             Console.WriteLine("5) Add a player");
         }
 
-        public static Clan CreateClan()
+        /// <summary>
+        /// //////////////////////
+        /// </summary>
+        /// <returns></returns>
+        public static Clan AddClan()
         {
-            // nom du clan 
             string clanName = AskQuestionString(NAME_QUESTION, NAME_ERROR);
-            // year 
-            int clanYear = AskQuestionInt(YEAR_QUESTION, INT_ERROR, isYearQuestion: true);
-            // type
+            int clanYear = AskQuestionInt(YEAR_QUESTION, MESSAGE_ERROR, isYearQuestion: true);
             Console.Write(
                 "Available category: 0: Exploration, 1: Combat, 2: Trading, 3: Politics, 4: All\nEnter category: ");
-            int clanType = AskQuestionInt(TYPE_QUESTION, INT_ERROR, isType: true);
-            // score 
-            int clanScore = AskQuestionInt(TYPE_QUESTION, INT_ERROR);
-            // y or n for wanna add player
+            int clanType = AskQuestionInt(TYPE_QUESTION, MESSAGE_ERROR, isType: true);
+            int clanScore = AskQuestionInt(SCORE_QUESTION, MESSAGE_ERROR);
             bool AddPlayer = AskQuestionBool(ADD_PLAYER_QUESTION);
-            // playeurs choice
+            List<int> clanPlayer = new List<int>();
             if (AddPlayer)
             {
-                for (int i = 0; i < CLANS_FILE.Length; i++)
+                string[] linesToWrite = ReadFile(PLAYERS_FILE);
+                if (linesToWrite.Length > 0)
                 {
-                    Console.WriteLine(String.Format($"{i,5} {CLANS_FILE[i]}"));
+                    Console.WriteLine($"Players found: {linesToWrite.Length}");
+                    // todo: print pas
+                    for (int i = 0; i < linesToWrite.Length; i++)
+                    {
+                        Console.WriteLine($"Player #{i.ToString()}: {linesToWrite[i]}");
+                    }
+                    // todo: print pas
                 }
 
-                if (CLANS_FILE.Length == 0)
-                {
-                    int selectPlayer = SelectPlayer(CLANS_FILE.Length);
-                }
+                clanPlayer = SelectPlayer(linesToWrite.Length);
             }
 
-
-            do
-            {
-                // todo: ici le Parse fait sortir un 0 au lieu ou un null
-                string category = Console.ReadLine();
-
-
-                if (category == "")
-                {
-                }
-
-                int.TryParse(Console.ReadLine(), out int inputUser);
-                clan.Type = inputUser;
-
-                if (clan.Type < 0 && clan.Type > 4)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid category");
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-                else
-                {
-                    switch (clan.Type)
-                    {
-                        case EXPLORATION:
-                            break;
-                        case COMBAT:
-                            break;
-                        case TRADING:
-                            break;
-                        case POLITICS:
-                            break;
-                        case ALL:
-                            break;
-                    }
-                }
-            } while (clan.Type < 0 && clan.Type > 4);
-
-
-            do
-            {
-                Console.Write("Clan score: ");
-                clan.Score = int.Parse(Console.ReadLine() ?? "0");
-                if (clan.Score < 0)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Score Invalid");
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-            } while (clan.Score < 0);
-
-            string? userInputYesNoToaster = "";
-            do
-            {
-                Console.WriteLine("Do you want to add player(s)? (y/n) : ");
-                userInputYesNoToaster = Console.ReadLine();
-            } while (userInputYesNoToaster == null && userInputYesNoToaster != "y" && userInputYesNoToaster != "n" &&
-                     userInputYesNoToaster != "Y" && userInputYesNoToaster != "N");
-
-            clan.Players = new List<int>();
-            string? playersInput = Console.ReadLine();
-            if ((playersInput != null) && (userInputYesNoToaster == "y" || userInputYesNoToaster == "y"))
-            {
-                string[] playerIds = playersInput.Split(',');
-                foreach (string player in playerIds)
-                {
-                    if (int.TryParse(player, out int playerId))
-                    {
-                        clan.Players.Add(playerId);
-                    }
-                }
-            }
-
-            return clan;
+            Clan newClan = new Clan();
+            newClan.Name = clanName;
+            newClan.CreationYear = clanYear;
+            newClan.Type = clanType;
+            newClan.Score = clanScore;
+            newClan.Players = clanPlayer;
+            return newClan;
         }
 
-        private static int SelectPlayer(int playersCount)
+        private static List<int> SelectPlayer(int playersCount)
         {
             int playerChoice = -1;
-            string idSelected = "";
+            List<int> selectedIds = new List<int> { };
+            string userInput = string.Empty;
             do
             {
-                if (playerChoice == 0)
+                if (selectedIds.Count == 0)
                 {
-                    Console.WriteLine(ZERO_PLAYER_QUESTION);
+                    Console.Write(ZERO_PLAYER_QUESTION);
                 }
                 else
                 {
-                    Console.WriteLine(ADDITIONAL_PLAYER_QUESTION);
+                    Console.Write($"Enter player id (press Enter to leave {string.Join(", ", selectedIds)}):: ");
                 }
-                idSelected = Console.ReadLine() ?? string.Empty;
-                if (!int.TryParse(idSelected, out playerChoice) || playerChoice > playersCount ||
-                    playerChoice < 0 && idSelected == string.Empty)
+
+                userInput = Console.ReadLine() ?? string.Empty;
+                if (!int.TryParse(userInput, out playerChoice) || playerChoice > playersCount - 1 ||
+                    playerChoice < 0)
                 {
-                    Console.WriteLine("Error id");
-                    idSelected = "";
-                    playerChoice = -1;
-                    // todo: assurer que je suis encore true
+                    if (selectedIds.Count != 0 && userInput == string.Empty)
+                    {
+                        return selectedIds;
+                    }
+                    else
+                    {
+                        MessageError("Error id");
+                        userInput = string.Empty;
+                        playerChoice = -1;
+                    }
+                    
                 }
-/////////////////////////////rendu ici///////////////////////////////////////////////////////
+                else 
+                {
+                    selectedIds.Add(playerChoice); 
+                    userInput = string.Empty;
+                    playerChoice = -1;
+                    
+                }
+               
+            } while (userInput == string.Empty);
 
-                idSelected += $", ";
-            } while (!int.TryParse(idSelected, out playerChoice) || playerChoice > playersCount || playerChoice < 0 ||
-                     idSelected == string.Empty);
-
-            return playerChoice;
+            return selectedIds;
         }
 
         private static string AskQuestionString(string question, string error)
@@ -265,9 +218,7 @@ namespace TP3_ETU
                 string input = Console.ReadLine() ?? string.Empty;
                 if (input == string.Empty)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(error);
-                    Console.ForegroundColor = ConsoleColor.White;
+                    MessageError(error);
                 }
                 else
                 {
@@ -276,6 +227,13 @@ namespace TP3_ETU
             } while (answer == string.Empty);
 
             return answer;
+        }
+
+        public static void MessageError(string errorMessage)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(errorMessage);
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         private static int AskQuestionInt(string question, string error, bool isYearQuestion = false,
@@ -287,9 +245,7 @@ namespace TP3_ETU
                 Console.Write(question);
                 if (!int.TryParse(Console.ReadLine(), out int input))
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(error);
-                    Console.ForegroundColor = ConsoleColor.White;
+                    MessageError(error);
                 }
                 else
                 {
@@ -298,20 +254,16 @@ namespace TP3_ETU
                         if (input < YEAR_MINIMUM)
                         {
                             input = -1;
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine(YEAR_ERROR_UNDER_2012);
-                            Console.ForegroundColor = ConsoleColor.White;
+                            MessageError(YEAR_ERROR_UNDER_2012);
                         }
                     }
 
                     if (isType)
                     {
-                        if (input < EXPLORATION && input > ALL)
+                        if (input < EXPLORATION || input > ALL)
                         {
                             input = -1;
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine(TYPE_ERROR);
-                            Console.ForegroundColor = ConsoleColor.White;
+                            MessageError(error);
                         }
                     }
 
@@ -326,23 +278,23 @@ namespace TP3_ETU
         {
             bool answer = false;
             bool valid = false;
-            Console.Write(question);
             while (!valid)
             {
+                Console.Write(question);
                 string input = Console.ReadLine();
-                if (input != null && input == "y")
+                if (input != null && input == "y" || input == "Y")
                 {
                     answer = true;
                     valid = true;
                 }
-                else if (input != null && input == "n")
+                else if (input != null && input == "n" || input == "N")
                 {
                     answer = false;
                     valid = true;
                 }
                 else
                 {
-                    Console.Write("Only y or n Allowed");
+                    MessageError("Only y or n Allowed");
                 }
             }
 
