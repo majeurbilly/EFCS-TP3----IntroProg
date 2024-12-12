@@ -123,11 +123,6 @@ namespace TP3_ETU
             Console.WriteLine("4) List all clans");
             Console.WriteLine("5) Add a player");
         }
-
-        /// <summary>
-        /// //////////////////////
-        /// </summary>
-        /// <returns></returns>
         public static Clan AddClan()
         {
             string clanName = AskQuestionString(NAME_QUESTION, NAME_ERROR);
@@ -144,24 +139,23 @@ namespace TP3_ETU
                 if (linesToWrite.Length > 0)
                 {
                     Console.WriteLine($"Players found: {linesToWrite.Length}");
-                    // todo: print pas
                     for (int i = 0; i < linesToWrite.Length; i++)
                     {
                         Console.WriteLine($"Player #{i.ToString()}: {linesToWrite[i]}");
                     }
-                    // todo: print pas
                 }
-
                 clanPlayer = SelectPlayer(linesToWrite.Length);
             }
 
-            Clan newClan = new Clan();
-            newClan.Name = clanName;
-            newClan.CreationYear = clanYear;
-            newClan.Type = clanType;
-            newClan.Score = clanScore;
-            newClan.Players = clanPlayer;
-            return newClan;
+            return new Clan
+            {
+                Name = clanName,
+                CreationYear = clanYear,
+                Type = clanType,
+                Score = clanScore,
+                Players = clanPlayer
+            };
+
         }
 
         private static List<int> SelectPlayer(int playersCount)
