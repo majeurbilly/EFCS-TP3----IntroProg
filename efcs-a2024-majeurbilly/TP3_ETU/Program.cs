@@ -63,7 +63,7 @@ namespace TP3_ETU
                 {
                     if (choice == QUIT)
                     {
-                        Console.WriteLine("Au revoir !");
+                        MessageGreen("Au revoir !");
                         exit = true;
                     }
                     else if (choice == ADD_CLAN)
@@ -348,7 +348,7 @@ namespace TP3_ETU
 
         public static void DisplayAllClans(List<Clan> clans)
         {
-            Console.WriteLine(String.Format($"{"#"} {"Name",-25} {"Year",-7} {"Type",-10} {"Score",-7} {"Players",-30}"));
+            Console.WriteLine(String.Format($"{"#"} {"Name",-25} {"Year",-10} {"Type",-10} {"Score",-7} {"Players",-30}"));
             Console.WriteLine("=============================================================================================================================");
             for (int i = 0; i < clans.Count; i++)
             {
