@@ -194,7 +194,7 @@ namespace TP3_ETU
             if (addPlayer)
             {
                 newClanPlayer = allClans[clanSelected].Players;
-                AddClanPlayer(newClanPlayer);
+                newClanPlayer = AddClanPlayer(newClanPlayer);
                 allClans[clanSelected].Players = newClanPlayer;
             }
 
@@ -224,7 +224,7 @@ namespace TP3_ETU
                 CreationYear = allClans[clanSelected].CreationYear,
                 Type = allClans[clanSelected].Type,
                 Score = allClans[clanSelected].Score,
-                Players =  allClans[clanSelected].Players = newClanPlayer
+                Players =  newClanPlayer
             };
         }
 
@@ -242,23 +242,24 @@ namespace TP3_ETU
 
         private static int AskQuestionScoreUpadte(int scoreSelected)
         {
-            Console.Write($"Enter score(press Enter to leave {scoreSelected}): ");
+            
             string input = string.Empty;
             int newScore = int.MinValue;
             do
             {
+                Console.Write($"Enter score(press Enter to leave {scoreSelected}): ");
                 input = Console.ReadLine() ?? string.Empty;
                 if (input == string.Empty)
                 {
                     return int.MinValue;
                 }
 
-                if (!int.TryParse(input, out newScore))
+                if (!int.TryParse(input, out newScore) || newScore < 0 || newScore > 10000)
                 {
                     MessageError(INT_ERROR);
                     newScore = int.MinValue;
                 }
-            } while (newScore > 0 && newScore < 10000);
+            } while (newScore < 0 || newScore >210000);
 
             return newScore;
         }
@@ -266,23 +267,24 @@ namespace TP3_ETU
         private static int AskQuestionTypeUpdate(int typeSelected)
         {
             Console.WriteLine(TYPE_MENU);
-            Console.Write($"Enter category(press Enter to leave {typeSelected}): ");
+            
             string input = string.Empty;
             int newType = int.MinValue;
             do
             {
+                Console.Write($"Enter category(press Enter to leave {typeSelected}): ");
                 input = Console.ReadLine() ?? string.Empty;
                 if (input == string.Empty)
                 {
                     return int.MinValue;
                 }
 
-                if (!int.TryParse(input, out newType))
+                if (!int.TryParse(input, out newType) || (newType < EXPLORATION) || (newType > ALL))
                 {
                     MessageError(INT_ERROR);
                     newType = int.MinValue;
                 }
-            } while (newType < EXPLORATION && newType > ALL);
+            } while (newType < EXPLORATION || newType > ALL);
 
             return newType;
         }
