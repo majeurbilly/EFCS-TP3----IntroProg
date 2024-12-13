@@ -40,9 +40,9 @@ namespace TP3_ETU
         const string UPDATE_QUESTION = "Enter clan to update(-1 to cancel): ";
         const string DELETE_QUESTION = "Enter clan to delete(-1 to cancel): ";
         const string INVALID_CHOICE = "Invalid choice";
+
         private const string TYPE_MENU =
             "Available category: 0: Exploration, 1: Combat, 2: Trading, 3: Politics, 4: All";
-        
 
 
         public static void Main(string[] args)
@@ -81,9 +81,7 @@ namespace TP3_ETU
                             Clan updatedClan = AddClan();
                             Library.UpdateClan(allClans, clanSelected, updatedClan);
                             Console.WriteLine("Clan mis à jour !");
-                            
                         }
-                        
                     }
                     else if (choice == REMOVE_CLAN)
                     {
@@ -93,7 +91,6 @@ namespace TP3_ETU
                             Library.RemoveClan(allClans, clanSelected);
                             Console.WriteLine("Clan removed successfully !");
                         }
-                        
                     }
                     else if (choice == LIST_ALL_CLAN)
                     {
@@ -101,15 +98,18 @@ namespace TP3_ETU
                     }
                     else if (choice == ADD_PLAYER)
                     {
-                        string newPlayer = string.Empty;
+                        string newPlayer = "string.Empty";
                         DisplayPlayers();
-                        newPlayer = CreatePlayer();
-                        allPlayers.Add(newPlayer);
-                        WriteFile(PLAYERS_FILE, allPlayers.ToArray());
-                  
-                            Console.WriteLine("Joueur ajouté avec succès !");
-                        
-                        
+                        while (newPlayer != string.Empty)
+                        {
+                            newPlayer = CreatePlayer();
+                            if (newPlayer != string.Empty)
+                            {
+                                allPlayers.Add(newPlayer);
+                                WriteFile(PLAYERS_FILE, allPlayers.ToArray());
+                                MessageGreen("Joueur ajouté avec succès !");
+                            }
+                        }
                     }
                     else
                     {
@@ -121,15 +121,20 @@ namespace TP3_ETU
                     MessageError(INVALID_CHOICE);
                 }
 
-                
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("\nAppuyez sur une touche pour continuer...");
-                Console.ForegroundColor = ConsoleColor.White;
+
+                MessageGreen("\nAppuyez sur une touche pour continuer...");
                 Console.ReadKey();
 
                 WriteClansToFile(CLANS_FILE, allClans);
                 WriteFile(PLAYERS_FILE, allPlayers.ToArray());
             }
+        }
+
+        private static void MessageGreen(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(message);
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         public static void DisplayMenu()
@@ -157,8 +162,7 @@ namespace TP3_ETU
             {
                 clanPlayer = AddClanPlayer(clanPlayer);
             }
-            
-            
+
 
             return new Clan
             {
@@ -180,46 +184,46 @@ namespace TP3_ETU
 
         private static void UpdateClan(List<Clan> allClans, int clanSelected)
         {
-                if (clanSelected == -1)
-                {
-                    return;
-                }
+            if (clanSelected == -1)
+            {
+                return;
+            }
 
-                string newNameUpadate = AskQuestionNameUpdate(allClans[clanSelected].Name);
-                int newYearUpadte = AskQuestionYearUpadate(allClans[clanSelected].CreationYear);
-                int newTypeUpadate = AskQuestionTypeUpdate(allClans[clanSelected].Type);
-                int newScore = AskQuestionScoreUpadte(allClans[clanSelected].Score);
+            string newNameUpadate = AskQuestionNameUpdate(allClans[clanSelected].Name);
+            int newYearUpadte = AskQuestionYearUpadate(allClans[clanSelected].CreationYear);
+            int newTypeUpadate = AskQuestionTypeUpdate(allClans[clanSelected].Type);
+            int newScore = AskQuestionScoreUpadte(allClans[clanSelected].Score);
 
 
-                bool addPlayer = AskQuestionBool(ADD_PLAYER_QUESTION, isYesNoQuestion: true);
-                List<int> newClanPlayer = new List<int>();
-                if (addPlayer)
-                {
-                    newClanPlayer = allClans[clanSelected].Players;
-                    AddClanPlayer(newClanPlayer);
-                    allClans[clanSelected].Players = newClanPlayer;
-                }
-                
-                
-                if (newNameUpadate != string.Empty)
-                {
-                    allClans[clanSelected].Name = newNameUpadate;
-                }
-                
-                if (newYearUpadte != int.MinValue)
-                {
-                    allClans[clanSelected].CreationYear = newYearUpadte;
-                }
-                if (newTypeUpadate != int.MinValue)
-                {
-                    allClans[clanSelected].Type = newTypeUpadate;
-                }
-                if (newScore != int.MinValue)
-                {
-                    allClans[clanSelected].Score = newScore;
-                }
-                
-            
+            bool addPlayer = AskQuestionBool(ADD_PLAYER_QUESTION, isYesNoQuestion: true);
+            List<int> newClanPlayer = new List<int>();
+            if (addPlayer)
+            {
+                newClanPlayer = allClans[clanSelected].Players;
+                AddClanPlayer(newClanPlayer);
+                allClans[clanSelected].Players = newClanPlayer;
+            }
+
+
+            if (newNameUpadate != string.Empty)
+            {
+                allClans[clanSelected].Name = newNameUpadate;
+            }
+
+            if (newYearUpadte != int.MinValue)
+            {
+                allClans[clanSelected].CreationYear = newYearUpadte;
+            }
+
+            if (newTypeUpadate != int.MinValue)
+            {
+                allClans[clanSelected].Type = newTypeUpadate;
+            }
+
+            if (newScore != int.MinValue)
+            {
+                allClans[clanSelected].Score = newScore;
+            }
         }
 
         private static bool ValidInput(int intValue)
@@ -232,7 +236,6 @@ namespace TP3_ETU
             {
                 return true;
             }
-                
         }
 
         private static int AskQuestionScoreUpadte(int scoreSelected)
@@ -340,11 +343,13 @@ namespace TP3_ETU
 
         public static void DisplayAllClans(List<Clan> clans)
         {
+            Console.WriteLine(String.Format($"{"#"} {"Name",-25} {"Year",-7} {"Type",-10} {"Score",-7} {"Players",-30}"));
+            Console.WriteLine("=============================================================================================================================");
             for (int i = 0; i < clans.Count; i++)
             {
                 Clan clan = clans[i];
                 Console.WriteLine(String.Format(
-                    $"{i}- {clan.Name,-25} {clan.CreationYear, -7} {ConvertirTypeInString(clan.Type),-10} {clan.Score,-7} {string.Join(", ", ConvertirPlayerInString(clan.Players)),10}"));
+                    $"{i}- {clan.Name,-25} {clan.CreationYear,-7} {ConvertirTypeInString(clan.Type),-10} {clan.Score,-7} {string.Join(", ", ConvertirPlayerInString(clan.Players)),-30}"));
                 //todo: aligne moi ca 
             }
         }
@@ -352,16 +357,17 @@ namespace TP3_ETU
         private static List<string> ConvertirPlayerInString(List<int> clanPlayers)
         {
             List<string> convertedPlayers = ReadPlayersFromFile(PLAYERS_FILE);
-            List<string> newClanPlayersConverted = new List<string>(); 
-            for (int i = 0; i < convertedPlayers.Count - 1; i++)
+            List<string> newClanPlayersConverted = new List<string>();
+
+            foreach (int playerIndex in clanPlayers)
             {
-                if (i >= 0 && i < convertedPlayers.Count)
+                if (playerIndex >= 0 && playerIndex < convertedPlayers.Count)
                 {
-                    newClanPlayersConverted.Add(convertedPlayers[i]);
+                    newClanPlayersConverted.Add(convertedPlayers[playerIndex]);
                 }
             }
-            return newClanPlayersConverted;
 
+            return newClanPlayersConverted;
         }
 
         private static string ConvertirTypeInString(int clanType)
@@ -538,6 +544,7 @@ namespace TP3_ETU
 
             return selectedIds;
         }
+
         public static void DisplayPlayers()
         {
             string[] linesToWrite = ReadFile(PLAYERS_FILE);
@@ -550,11 +557,12 @@ namespace TP3_ETU
                 }
             }
         }
+
         public static string CreatePlayer()
         {
             string name = string.Empty;
-                Console.Write("Enter new player name: ");
-                name = Console.ReadLine() ?? string.Empty;
+            Console.Write("Enter new player name: ");
+            name = Console.ReadLine() ?? string.Empty;
             return name;
         }
 
