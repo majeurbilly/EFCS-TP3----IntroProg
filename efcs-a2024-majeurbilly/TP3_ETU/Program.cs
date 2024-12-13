@@ -77,8 +77,7 @@ namespace TP3_ETU
                         int clanSelected = AskQuestionClanId(allClans, UPDATE_QUESTION);
                         if (clanSelected != -1)
                         {
-                            UpdateClan(allClans, clanSelected);
-                            Clan updatedClan = AddClan();
+                            Clan updatedClan = UpdateClan(allClans, clanSelected);
                             Library.UpdateClan(allClans, clanSelected, updatedClan);
                             Console.WriteLine("Clan mis à jour !");
                         }
@@ -182,13 +181,8 @@ namespace TP3_ETU
             return clanPlayer;
         }
 
-        private static void UpdateClan(List<Clan> allClans, int clanSelected)
+        private static Clan UpdateClan(List<Clan> allClans, int clanSelected)
         {
-            if (clanSelected == -1)
-            {
-                return;
-            }
-
             string newNameUpadate = AskQuestionNameUpdate(allClans[clanSelected].Name);
             int newYearUpadte = AskQuestionYearUpadate(allClans[clanSelected].CreationYear);
             int newTypeUpadate = AskQuestionTypeUpdate(allClans[clanSelected].Type);
@@ -224,6 +218,14 @@ namespace TP3_ETU
             {
                 allClans[clanSelected].Score = newScore;
             }
+            return new Clan
+            {
+                Name = allClans[clanSelected].Name,
+                CreationYear = allClans[clanSelected].CreationYear,
+                Type = allClans[clanSelected].Type,
+                Score = allClans[clanSelected].Score,
+                Players =  allClans[clanSelected].Players = newClanPlayer
+            };
         }
 
         private static bool ValidInput(int intValue)
@@ -287,18 +289,19 @@ namespace TP3_ETU
 
         private static int AskQuestionYearUpadate(int creationYearSelected)
         {
-            Console.Write($"Enter year(press Enter to leave {creationYearSelected}): ");
+           
             int yearUpadate = int.MinValue;
             string input = string.Empty;
             do
             {
+                Console.Write($"Enter year(press Enter to leave {creationYearSelected}): ");
                 input = Console.ReadLine() ?? string.Empty;
                 if (input == string.Empty)
                 {
                     return int.MinValue;
                 }
 
-                if (!int.TryParse(input, out yearUpadate))
+                if (!int.TryParse(input, out yearUpadate) || yearUpadate < YEAR_MINIMUM)
                 {
                     MessageError(INT_ERROR);
                     yearUpadate = int.MinValue;
