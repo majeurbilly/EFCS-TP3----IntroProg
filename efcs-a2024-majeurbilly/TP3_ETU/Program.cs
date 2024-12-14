@@ -262,7 +262,6 @@ namespace TP3_ETU
         }
         private static int AskQuestionScoreUpadte(int scoreSelected)
         {
-            
             string input = string.Empty;
             int newScore = int.MinValue;
             do
@@ -283,7 +282,6 @@ namespace TP3_ETU
 
             return newScore;
         }
-
         private static int AskQuestionTypeUpdate(int typeSelected)
         {
             Console.WriteLine(TYPE_MENU);
@@ -308,7 +306,6 @@ namespace TP3_ETU
 
             return newType;
         }
-
         private static int AskQuestionYearUpadate(int creationYearSelected)
         {
            
