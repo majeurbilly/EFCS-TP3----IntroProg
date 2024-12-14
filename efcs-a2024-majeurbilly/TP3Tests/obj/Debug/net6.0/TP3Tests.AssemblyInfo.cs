@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TP3Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a982ef12172f25b0542a0095146085c3858d18d6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+524aaf154d17e617acb0dc3614cef62c4f712655")]
 [assembly: System.Reflection.AssemblyProductAttribute("TP3Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TP3Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -24,6 +24,7 @@ namespace TP3_ETU
         public const int LIST_ALL_CLAN = 4;
         public const int ADD_PLAYER = 5;
 
+        public const int TYPE_MINIMUM = 10000;
         public const int YEAR_MINIMUM = 2012;
         public readonly List<char> VALIDATION_YES_NO_TOASTER = new List<char> { 'y', 'Y', 'n', 'N' };
         private const string NAME_QUESTION = "Enter clan name: ";
@@ -37,10 +38,17 @@ namespace TP3_ETU
         private const string ADD_PLAYER_QUESTION = "Do you want to add player(s) (Y or N)? ";
         private const string ZERO_PLAYER_QUESTION = "Enter player id: ";
         public const string MESSAGE_ERROR = "Incorrect value.";
-        const string UPDATE_QUESTION = "Enter clan to update(-1 to cancel): ";
-        const string DELETE_QUESTION = "Enter clan to delete(-1 to cancel): ";
-        const string INVALID_CHOICE = "Invalid choice";
-
+        public const string UPDATE_QUESTION = "Enter clan to update(-1 to cancel): ";
+        public const string DELETE_QUESTION = "Enter clan to delete(-1 to cancel): ";
+        public const string INVALID_CHOICE = "Invalid choice";
+        public const string CREATE_PLAYER_QUESTION = "Enter new player name: ";
+        public const string ERROR_ID = "Error id";
+        public const string EXPLORATION_STRING = "EXPLORATION";
+        public const string COMBAT_STRING = "COMBAT";
+        public const string TRADING_STRING = "TRADING";
+        public const string POLITICS_STRING = "POLITICS";
+        public const string ALL_STRING = "ALL";
+        
         private const string TYPE_MENU =
             "Available category: 0: Exploration, 1: Combat, 2: Trading, 3: Politics, 4: All";
 
@@ -135,7 +143,12 @@ namespace TP3_ETU
             Console.WriteLine(message);
             Console.ForegroundColor = ConsoleColor.White;
         }
-
+        public static void MessageError(string errorMessage)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(errorMessage);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
         public static void DisplayMenu()
         {
             Console.Clear();
@@ -147,7 +160,30 @@ namespace TP3_ETU
             Console.WriteLine("4) List all clans");
             Console.WriteLine("5) Add a player");
         }
-
+        public static void DisplayPlayers()
+        {
+            string[] linesToWrite = ReadFile(PLAYERS_FILE);
+            if (linesToWrite.Length > 0)
+            {
+                Console.WriteLine($"Players found: {linesToWrite.Length}");
+                for (int i = 0; i < linesToWrite.Length; i++)
+                {
+                    Console.WriteLine($"Player #{i.ToString()}: {linesToWrite[i]}");
+                }
+            }
+        }
+        public static void DisplayAllClans(List<Clan> clans)
+        {
+            Console.WriteLine(String.Format($"{"#"} {"Name",-25} {"Year",-10} {"Type",-10} {"Score",-7} {"Players",-30}"));
+            Console.WriteLine("=============================================================================================================================");
+            for (int i = 0; i < clans.Count; i++)
+            {
+                Clan clan = clans[i];
+                Console.WriteLine(String.Format(
+                    $"{i}- {clan.Name,-25} {clan.CreationYear,-7} {ConvertirTypeInString(clan.Type),-10} {clan.Score,-7} {string.Join(", ", ConvertirPlayerInString(clan.Players)),-30}"));
+                //todo: aligne moi ca 
+            }
+        }
         public static Clan AddClan()
         {
             string clanName = AskQuestionString(NAME_QUESTION, NAME_ERROR, isNameQuestion: true);
@@ -161,8 +197,6 @@ namespace TP3_ETU
             {
                 clanPlayer = AddClanPlayer(clanPlayer);
             }
-
-
             return new Clan
             {
                 Name = clanName,
@@ -172,7 +206,6 @@ namespace TP3_ETU
                 Players = clanPlayer
             };
         }
-
         private static List<int> AddClanPlayer(List<int> clanPlayer)
         {
             string[] linesToWrite = ReadFile(PLAYERS_FILE);
@@ -227,19 +260,6 @@ namespace TP3_ETU
                 Players =  newClanPlayer
             };
         }
-
-        private static bool ValidInput(int intValue)
-        {
-            if (intValue == int.MinValue)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
         private static int AskQuestionScoreUpadte(int scoreSelected)
         {
             
@@ -254,12 +274,12 @@ namespace TP3_ETU
                     return int.MinValue;
                 }
 
-                if (!int.TryParse(input, out newScore) || newScore < 0 || newScore > 10000)
+                if (!int.TryParse(input, out newScore) || newScore < Decimal.Zero || newScore > TYPE_MINIMUM)
                 {
                     MessageError(INT_ERROR);
                     newScore = int.MinValue;
                 }
-            } while (newScore < 0 || newScore >210000);
+            } while (newScore < Decimal.Zero || newScore >TYPE_MINIMUM);
 
             return newScore;
         }
@@ -346,53 +366,6 @@ namespace TP3_ETU
             return clanId;
         }
 
-        public static void DisplayAllClans(List<Clan> clans)
-        {
-            Console.WriteLine(String.Format($"{"#"} {"Name",-25} {"Year",-10} {"Type",-10} {"Score",-7} {"Players",-30}"));
-            Console.WriteLine("=============================================================================================================================");
-            for (int i = 0; i < clans.Count; i++)
-            {
-                Clan clan = clans[i];
-                Console.WriteLine(String.Format(
-                    $"{i}- {clan.Name,-25} {clan.CreationYear,-7} {ConvertirTypeInString(clan.Type),-10} {clan.Score,-7} {string.Join(", ", ConvertirPlayerInString(clan.Players)),-30}"));
-                //todo: aligne moi ca 
-            }
-        }
-
-        private static List<string> ConvertirPlayerInString(List<int> clanPlayers)
-        {
-            List<string> convertedPlayers = ReadPlayersFromFile(PLAYERS_FILE);
-            List<string> newClanPlayersConverted = new List<string>();
-
-            foreach (int playerIndex in clanPlayers)
-            {
-                if (playerIndex >= 0 && playerIndex < convertedPlayers.Count)
-                {
-                    newClanPlayersConverted.Add(convertedPlayers[playerIndex]);
-                }
-            }
-
-            return newClanPlayersConverted;
-        }
-
-        private static string ConvertirTypeInString(int clanType)
-        {
-            switch (clanType)
-            {
-                case EXPLORATION:
-                    return "EXPLORATION";
-                case COMBAT:
-                    return "COMBAT";
-                case TRADING:
-                    return "TRADING";
-                case POLITICS:
-                    return "POLITICS";
-                case ALL:
-                    return "ALL";
-                default:
-                    return "UNKNOWN";
-            }
-        }
 
         private static string AskQuestionString(string question, string error, bool isNameQuestion = false)
         {
@@ -451,7 +424,7 @@ namespace TP3_ETU
                     }
                     else if (isScoreQuestion)
                     {
-                        if (input < EXPLORATION || input > 10000)
+                        if (input < EXPLORATION || input > TYPE_MINIMUM)
                         {
                             input = -1;
                             MessageError(error);
@@ -465,14 +438,6 @@ namespace TP3_ETU
 
             return answer;
         }
-
-        public static void MessageError(string errorMessage)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(errorMessage);
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-
         public static bool AskQuestionBool(string question, bool isYesNoQuestion = false)
         {
             bool answer = false;
@@ -507,6 +472,43 @@ namespace TP3_ETU
             return answer;
         }
 
+        private static List<string> ConvertirPlayerInString(List<int> clanPlayers)
+        {
+            List<string> convertedPlayers = ReadPlayersFromFile(PLAYERS_FILE);
+            List<string> newClanPlayersConverted = new List<string>();
+
+            foreach (int playerIndex in clanPlayers)
+            {
+                if (playerIndex >= Decimal.Zero && playerIndex < convertedPlayers.Count)
+                {
+                    newClanPlayersConverted.Add(convertedPlayers[playerIndex]);
+                }
+            }
+
+            return newClanPlayersConverted;
+        }
+
+        private static string ConvertirTypeInString(int clanType)
+        {
+            switch (clanType)
+            {
+                case EXPLORATION:
+                    return EXPLORATION_STRING;
+                
+                case COMBAT:
+                    return COMBAT_STRING;
+                
+                case TRADING:
+                    return TRADING_STRING;
+                
+                case POLITICS:
+                    return POLITICS_STRING;
+                case ALL:
+                    return ALL_STRING;
+                default:
+                    return "UNKNOWN";
+            }
+        }
         private static List<int> SelectPlayer(int playersCount)
         {
             int playerChoice = -1;
@@ -514,7 +516,7 @@ namespace TP3_ETU
             string userInput = string.Empty;
             do
             {
-                if (selectedIds.Count == 0)
+                if (selectedIds.Count == Decimal.Zero)
                 {
                     Console.Write(ZERO_PLAYER_QUESTION);
                 }
@@ -534,7 +536,9 @@ namespace TP3_ETU
                     }
                     else
                     {
-                        MessageError("Error id");
+                        MessageError(ERROR_ID);
+                        
+                        
                         userInput = string.Empty;
                         playerChoice = -1;
                     }
@@ -549,24 +553,10 @@ namespace TP3_ETU
 
             return selectedIds;
         }
-
-        public static void DisplayPlayers()
-        {
-            string[] linesToWrite = ReadFile(PLAYERS_FILE);
-            if (linesToWrite.Length > 0)
-            {
-                Console.WriteLine($"Players found: {linesToWrite.Length}");
-                for (int i = 0; i < linesToWrite.Length; i++)
-                {
-                    Console.WriteLine($"Player #{i.ToString()}: {linesToWrite[i]}");
-                }
-            }
-        }
-
         public static string CreatePlayer()
         {
             string name = string.Empty;
-            Console.Write("Enter new player name: ");
+            Console.Write(CREATE_PLAYER_QUESTION);
             name = Console.ReadLine() ?? string.Empty;
             return name;
         }
