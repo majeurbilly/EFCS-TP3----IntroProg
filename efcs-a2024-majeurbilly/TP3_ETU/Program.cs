@@ -340,8 +340,10 @@ namespace TP3_ETU
         private static int AskQuestionClanId(List<Clan> allClans, string question)
         {
             int maxValueInput = allClans.Count - 1;
+            int minValueInput = -2;
             int clanId;
             bool validInput = true;
+            
 
             DisplayAllClans(allClans);
             do
@@ -349,7 +351,7 @@ namespace TP3_ETU
                 Console.Write(question);
                 string input = Console.ReadLine() ?? String.Empty;
 
-                if (!int.TryParse(input, out clanId) || clanId > maxValueInput || clanId <= -2) //todo: -0 = 0 
+                if (!int.TryParse(input, out clanId) || clanId > maxValueInput || clanId <= minValueInput) //todo: -0 = 0 
                 {
                     MessageError(INT_ERROR);
                     validInput = false;
